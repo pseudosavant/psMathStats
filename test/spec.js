@@ -1,20 +1,5 @@
 /*global ps:true, describe:true, it:true, expect:true, beforeEach:true, window:true*/
 
-var psArrayMethods = [
-        "sum",
-        "sample",
-        "mean",
-        "variance",
-        "stdDev",
-        "max",
-        "min",
-        "sortNumber",
-        "median",
-        "percentile",
-        "histogram",
-        "countByType"
-];
-
 var run = function (fn) {
     var start = +new Date(),
         result = fn(),
@@ -190,9 +175,9 @@ describe("Array Functions", function () {
         expect(response.duration).toBeLessThan(50);
     });
 
-    it("Array.variance (1000 samples): less than 5ms", function () {
+    it("Array.variance (10000 samples): less than 5ms", function () {
         var response = run(function () {
-            return myArray.variance(10000);
+            return myArray.sample(10000).variance();
         });
 
         expect(response.result).toBeGreaterThan(800000000);
@@ -333,17 +318,3 @@ describe("Array Functions", function () {
     });
 });
 
-describe("Native Array Tests", function () {
-    it("Native Array object should inherit have ps.Array methods", function () {
-        ps.Array(true);
-        var a = [1, 2, 3];
-
-        for (var i = 0; i < psArrayMethods.length; i++) {
-            var method = psArrayMethods[i];
-
-            expect(Array.prototype[method]).toBeDefined();
-        }
-
-        expect(a.sum()).toEqual(6);
-    });
-});

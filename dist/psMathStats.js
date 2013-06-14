@@ -4,12 +4,12 @@ PseudoSavant JavaScript Math and Statistics Library
 @version    2.0
 @author     Paul Ellis
 @url        http://pseudosavant.com
-@copyright  Copyright 2012, Paul Ellis
+@copyright  Copyright 2013, Paul Ellis
 @license    BSD
 */
 
 (function (global) {
-    "use strict";
+    'use strict';
     var undefined = void 0;
     var ps = global.ps = global.ps || {};
 
@@ -44,7 +44,7 @@ PseudoSavant JavaScript Math and Statistics Library
         var s = samples,
             a = this,
             l = a.length,
-            doSampling = (typeof s === "number" && s < l),
+            doSampling = (typeof s === 'number' && s < l),
             sampledArray = [],
             i;
 
@@ -74,75 +74,59 @@ PseudoSavant JavaScript Math and Statistics Library
     /**
     * Returns the arithmetic mean of the source Array
     *
-    * @param {number} samples The number of samples to return from the source Array
     * @return {number} The arithmetic mean of all of the values in the Array
     * @this {array} the Array the method is being called on
     */
-    array.mean = function (samples) {
-        var s = samples,
-            doSampling = (typeof s === "number"),
-            a = (doSampling ? this.sample(s) : this);
-
+    array.mean = function () {
+        var a = this;
         return a.sum() / a.length;
     };
 
     /**
     * Returns the Variance of the source Array
     *
-    * @param {number} samples The number of samples to return from the source Array
     * @this {array} the Array the method is being called on
     * @return {number} The statistical variance of all of the values in the Array
     */
-    array.variance = function (samples) {
+    array.variance = function () {
         var a = this,
-            doSampling = (typeof samples === "number"),
             l = a.length,
-            count = (doSampling ? Math.min(l, samples) : l),
             m = a.mean(),
             sumOfSquares = 0,
             i = 0;
 
-        for (i = 0; i < count; i++) {
-            var index = (doSampling ? Math.floor(Math.random() * l) : i);
-            sumOfSquares += Math.pow(a[index] - m, 2);
+        for (i = 0; i < l; i++) {
+            sumOfSquares += Math.pow(a[i] - m, 2);
         }
 
-        return sumOfSquares / count;
+        return sumOfSquares / l;
     };
 
     /**
     * Returns the Standard Deviation of the source Array
     *
-    * @param {number} samples The number of samples to return from the source Array
     * @return {number} The standard deviation of all of the values in the Array
     * @this {array} the Array the method is being called on
     */
-    array.stdDev = function (samples) {
-        if (typeof samples === "number") {
-            return Math.sqrt(this.variance(samples));
-        } else {
-            return Math.sqrt(this.variance());
-        }
+    array.stdDev = function () {
+        return Math.sqrt(this.variance());
     };
 
     /**
     * Returns the largest or smallest value in an Array. Only used
     * internally by other methods (Array.min and Array.max)
     *
-    * @param {string} type The type of value to find, the "max" value or the "min" value
+    * @param {string} type The type of value to find, the 'max' value or the 'min' value
     * @param {array} arr The array to find the min or max of
-    * @param {number} samples The number of samples to return from the source Array
     * @return {number} The largest or smallest value in the Array
     * @this {function} anonymous function module scope
     * @see array.min
     * @see array.max
     */
-    var minMax = function (type, samples) {
-        var s = samples,
-            doSampling = (typeof s === "number"),
-            a = (doSampling ? this.sample(s) : this),
+    var minMax = function (type) {
+        var a = this,
             l = a.length,
-            t = (type === "max" ? "max" : "min"),
+            t = (type === 'max' ? 'max' : 'min'),
             fn = Math[t], // Specify if this should get the min or the max
             i = 0;
 
@@ -167,23 +151,21 @@ PseudoSavant JavaScript Math and Statistics Library
     /**
     * Returns the highest numeric value of a Array
     *
-    * @param {number} samples The number of samples to return from the source Array
-    * @return {number} The highest/"max" value in the Array
+    * @return {number} The highest/'max' value in the Array
     * @this {array} the Array the method is being called on
     */
-    array.max = function (samples) {
-        return minMax.call(this, "max", samples);
+    array.max = function () {
+        return minMax.call(this, 'max');
     };
 
     /**
     * Returns the lowest numeric value of a Array
     *
-    * @param {number} samples The number of samples to return from the source Array
-    * @return {number} The highest/"min" value in the Array
+    * @return {number} The highest/'min' value in the Array
     * @this {array} the Array the method is being called on
     */
-    array.min = function (samples) {
-        return minMax.call(this, "min", samples);
+    array.min = function () {
+        return minMax.call(this, 'min');
     };
 
     /**
@@ -205,14 +187,11 @@ PseudoSavant JavaScript Math and Statistics Library
     /**
     * Returns the the median of the Array.
     *
-    * @param {number} samples The number of samples to return from the source Array
     * @return {number} The median of the Array
     * @this {array} the Array the method is being called on
     */
-    array.median = function (samples) {
-        var s = samples,
-            doSampling = (typeof s === "number"),
-            a = (doSampling ? this.sample(s) : this),
+    array.median = function () {
+        var a = this,
             l = a.length,
             isOdd = (l % 2 === 1),
             middleIndex = Math.floor((l - 1) / 2),
@@ -230,14 +209,12 @@ PseudoSavant JavaScript Math and Statistics Library
     /**
     * Returns the value at the given percentile for the sorted Array
     *
-    * @param {number} samples The number of samples to return from the source Array
     * @param {number} percent The percentile being requested.
     * @return {number} the value at the given percentile for the Array
     * @this {array} the Array the method is being called on
     */
-    array.percentile = function (percent, samples) {
-        var doSampling = (typeof samples === "number"),
-            a = (doSampling ? this.sample(samples) : this),
+    array.percentile = function (percent) {
+        var a = this,
             index = Math.floor(percent * a.length);
         return a.sortNumber()[index];
     };
@@ -246,15 +223,12 @@ PseudoSavant JavaScript Math and Statistics Library
     * Returns an object where the key equals the item and the value equals the
     * count of the times that item occured in the array
     *
-    * @param {number} samples The number of samples to return from the source Array
     * @return {object} An object where the key is the item and the value is the
     *   count of times it occured in the Array
     * @this {array} the Array the method is being called on
     */
-    array.histogram = function (samples) {
-        var s = samples,
-            doSampling = (typeof s === "number"),
-            a = (doSampling ? this.sample(s) : this),
+    array.histogram = function () {
+        var a = this,
             l = a.length,
             o = {},
             i = 0,
@@ -262,7 +236,7 @@ PseudoSavant JavaScript Math and Statistics Library
 
         for (i = 0; i < l; i++) {
             val = a[i];
-            if (typeof o[val] === "number") {
+            if (typeof o[val] === 'number') {
                 o[val]++;
             } else {
                 o[val] = 1;
@@ -275,14 +249,11 @@ PseudoSavant JavaScript Math and Statistics Library
     /**
     * Returns an object that shows the total count of each type in a Array
     *
-    * @param {number} samples The number of samples to return from the source Array
     * @return {object} An object where the key:value represents type:count in the Array
     * @this {array} the Array the method is being called on
     */
-    array.countByType = function (samples) {
-        var s = samples,
-            doSampling = (typeof s === "number"),
-            a = (doSampling ? this.sample(s) : this),
+    array.countByType = function () {
+        var a = this,
             l = a.length,
             o = {},
             i = 0,
@@ -307,18 +278,18 @@ PseudoSavant JavaScript Math and Statistics Library
 
     // Returns true/false if n is an even number
     math.even = function (n) {
-        return (typeof n === "number" && n % 2 === 0);
+        return (typeof n === 'number' && n % 2 === 0);
     };
 
     // Returns true/false if n is an odd number
     math.odd = function (n) {
-        return (typeof n === "number" && n % 2 === 1);
+        return (typeof n === 'number' && n % 2 === 1);
     };
 
     // Calculates the factorial for any given integer
     math.fact = function (n) {
         var f = 1;
-        if (typeof n !== "number" || (n % 1) !== 0) {
+        if (typeof n !== 'number' || (n % 1) !== 0) {
             f = null;
         }
         else if (n > 1) {
@@ -342,7 +313,7 @@ PseudoSavant JavaScript Math and Statistics Library
 
     // Generates a random number between two numbers, defaulting to integers
     math.randomBetween = function (low, high, digits) {
-        var d = (typeof digits === "number" && digits > 0 ? digits : 0),
+        var d = (typeof digits === 'number' && digits > 0 ? digits : 0),
         floor = +low, // + is used to coerce type to number
         range = +(high - low), // + is used to coerce type to number
         random = Math.random() * range + floor;
